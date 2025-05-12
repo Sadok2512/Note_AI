@@ -2,7 +2,14 @@
 .env
 .env.*
 *.env.*
-*.log
-*.sqlite3
-*.pyc
+
+# Python cache
 __pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+.virtualenv/
