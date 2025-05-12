@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Audio Transcriber & Summarizer</title>
+</head>
+<body>
+  <h1>Upload Audio File</h1>
+  <form id="uploadForm">
+    <input type="file" id="audioFile" accept="audio/*" required><br><br>
+    <button type="submit">Transcribe</button>
+  </form>
+
+  <h2>Transcript</h2>
+  <pre id="transcript"></pre>
+
+  <h2>Summary</h2>
+  <pre id="summary"></pre>
+
+  <script>
+    const form = document.getElementById('uploadForm');
+    const transcriptEl = document.getElementById('transcript');
+    const summaryEl = document.getElementById('summary');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const fileInput = document.getElementById('audioFile');
+      const formData = new FormData();
+      formData.append("file", fileInput.files[0]);
+
+      // Upload and get transcript
+      const uploadRes = await fetch("/upload-audio", {
+        method: "POST",
+        body: formData
+      });
+      const uploadData = await uploadRes.json();
+      transcriptEl.textContent = uploadData.conversation;
+
+      // Get summary
+      const summaryRes = await fetch("/summarize", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ conversation: uploadData.conversation })
+      });
+      const summaryData = await summaryRes.json();
+      summaryEl.textContent = summaryData.summary;
+    });
+  </script>
+</body>
+</html>
